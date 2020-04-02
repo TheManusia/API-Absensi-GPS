@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 include 'koneksi.php';
 
@@ -9,33 +9,37 @@ $a = explode("-", $harini);
 $b = $a[0] . $a[1] . $a[2];
 
 if (isset($tanggal[$b])) {
-    
+
     die($tanggal[$b]['deskripsi']);
 } else if (date("D", strtotime($harini)) == "Sun") {
 
-    die("Hari Minggu, ".$harini);
+    die("Hari Minggu, " . $harini);
 } else if (date("D", strtotime($harini)) == "Sat") {
 
-    die("Hari Sabtu, ".$harini);
+    die("Hari Sabtu, " . $harini);
 } else {
 
-    $query = "SELECT * FROM data_absensi WHERE tanggal = $harini";
-    $result = mysqli_query($con, $query);
+    $check = mysqli_query($con, "SELECT * FROM user");
 
-    $query1 = "SELECT * FROM detail_absensi";
-    $result1 = mysqli_query($con, $query1);
+    while($id = mysqli_fetch_array($check)) {
 
-    if (mysqli_num_rows($result)) {
-        while ($data = mysqli_fetch_array($result1)) {
+        $query = "SELECT * FROM data_absensi WHERE tanggal = '$harini' AND username = '$id[username]'";
+        $result = mysqli_query($con, $query);
+
+        $query1 = "SELECT * FROM detail_absensi WHERE username = '$id[username]'";
+        $result1 = mysqli_query($con, $query1);
+        $data = mysqli_fetch_array($result1);
+
+        if (mysqli_num_rows($result)) {
             $hadir = $data['hadir'] + 1;
             $query2 = "UPDATE detail_absensi SET hadir = '$hadir' WHERE username = '$data[username]'";
             mysqli_query($con, $query2);
-        }
-    } else {
-        while ($data = mysqli_fetch_array($result1)) {
+        } else {
             $alpa = $data['alpa'] + 1;
             $query2 = "UPDATE detail_absensi SET alpa = '$alpa' WHERE username = '$data[username]'";
             mysqli_query($con, $query2);
         }
     }
 }
+
+?>
