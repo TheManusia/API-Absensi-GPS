@@ -55,6 +55,8 @@ if ($result) {
     $response = new a();
     $response->success = 0;
     $response->message = "Password salah";
+    $response->username = $username;
+    $response->password = $password;
     $response->nama = $nama;
     die(json_encode($response));
 }
